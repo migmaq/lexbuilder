@@ -17,7 +17,7 @@ def main():
 
     # Load lexemes we have exported from legacy mmo
     mmo_json = None
-    with open('legacy-mmo.json') as f:
+    with open('import-data/legacy-mmo.json') as f:
         mmo_json = json.load(f)
     assert len(mmo_json) == 1, f"Expected root of mmo.json to be dict with one key"
     lexemes = mmo_json['lexemes']
@@ -49,7 +49,7 @@ def main():
         entries.extend(convert_lexeme_to_entries(src_lexeme))
 
     # spew new format to JSON
-    with open('entries.json', 'w') as f:
+    with open('import-data/entries.json', 'w') as f:
         json.dump(entries, f, sort_keys=False, indent=2, ensure_ascii=False)
 
     # convert to NestedText (just for a human readable version)
@@ -58,7 +58,7 @@ def main():
     #    f.write(nestedtext_content)
         
     # spew leftovers to JSON
-    with open('leftovers.json', 'w') as f:
+    with open('import-data/leftovers.json', 'w') as f:
         json.dump(lexemes, f, sort_keys=False, indent=2, ensure_ascii=False)
 
     # import into database

@@ -29,7 +29,7 @@ $ ./mmodb.sh
 * Download "legacy-mmo.json"
 - I didn't put in the git repository because is will bloat it, so
   grab it with wget thusly:
-$ cd lexbuilder
+$ cd lexbuilder/import-data
 $ wget entropy.org/legacy-mmo.json
 
 * Run the importer
