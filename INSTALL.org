@@ -1,0 +1,49 @@
+* Hackathon mode
+- this is all a bit wonky - still in hackathon mode!
+
+* Python 3
+- is assumed that your "python" command runs python 3
+- if not, on ubuntu you can "apt install python-is-python3" to achieve this
+  (maybe not still required on latest version ???)
+
+* Install MongoDb Server.
+- I am using the version from the mongo website:
+  https://www.mongodb.com/try/download/community
+- The ubuntu package manager version may be quite stale (mongo switched
+  from AGPL to SSPL some time ago, so not sure if ubuntu stopped at the last
+  AGPL version).
+
+* Install the pymongo package
+- I should do a setup.py, virtualenv thing but for now:
+  $ python -m pip install pymongo
+
+* Start mongodb
+$ ./mmodb.sh
+- will create the db in a subdir called "mmodb" if it does not already
+  exist.
+- this is running on a non-standard port (so as not to collide with a
+  possible OS install of mongodb)
+- long term this will be switched to run under systemd - this method is
+  just for development.
+
+* Download "legacy-mmo.json"
+- I didn't put in the git repository because is will bloat it, so
+  grab it with wget thusly:
+$ cd lexbuilder
+$ wget entropy.org/legacy-mmo.json
+
+* Run the importer
+$ python import_from_legacy_mmo.py
+- Last line will be something like "DB now has 6739 records"
+- Each run nukes the DB and reloads.
+
+* Do the codegen
+$ python compile_models.py
+- long term this step will be integrated or not required
+- for now drops "resources/lexi.html" (the test lexeme editor)
+  
+* Start mmoserver and visit a page
+$ python mmoserver.py
+http://localhost:8080/wordlist
+http://localhost:8080/resources/lexi.html
+

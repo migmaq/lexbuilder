@@ -1,0 +1,21 @@
+* Approval process
+- plan to have 2 versions of at least the 'entries' collection (mongos
+  name for a table) - 'entries' and 'entries_published'.
+- when the site is in 'edit' mode, the 'entries' collection will be used.
+- when the site is in 'published' mode, the 'entries_published' ...
+- direct edits can only be made to the 'entries' collection.
+- there will be queries that show all 'entries' that are newer than
+  the corresponding published version, and a way of doing the approval,
+  which will copy it over.
+- this would be a total mess with a relational DB (db integrity when
+  complicated things are modelled using relations), but we almost
+  never use joins in mongo - each entry stands alone - so works OK.
+** Complications
+- changes to Smith-Francis fields will need SF approval
+- changes to Listuguj fields will need Listuguj
+- what about changes to just the english parts?
+- how to communicate requests for more changes?
+- they currently require approval from multiple people, either
+  have to build this in, or have this out of band - which will
+  be harder for Smith Francis (Lisuguj is done by a small group that
+  meet in person)
