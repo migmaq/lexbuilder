@@ -4,7 +4,9 @@
 * Python 3
 - is assumed that your "python" command runs python 3
 - if not, on ubuntu you can "apt install python-is-python3" to achieve this
-  (maybe not still required on latest version ???)
+  (this doesn't break anything, if you don't do this you have separate
+  python3 and python2.7 commands, but no "python")
+  (maybe not still required on latest ubuntu release)
 
 * Install MongoDb Server.
 - I am using the version from the mongo website:
