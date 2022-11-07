@@ -4,6 +4,14 @@ from util import deref
 #import openpyxl
 
 class TableFormatter(object):
+    """A TableFormatter is a convenient way to render an instance list
+    to a html table.
+
+    Has some weird power we don't need for MMO + should be more integrated
+    with the entity model stuff - but we mostly repurposed this from
+    something else ... so there you go.
+    """
+    
     def __init__ (self, cellFormatters=[], detailRowFormatter=None, groupTitleFormatter=None, everyRowIsNewGroup=False, suppressHeadRow=False,
                   cssClass='entity-browser', caption=None, note=None, properties=None):
         self.cellFormatters = cellFormatters[:]
