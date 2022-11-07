@@ -1,0 +1,44 @@
+* Page decoding
+
+
+(01R,P9,S8,SS1,D14,P1)
+All of this stuff seems to identify the book.
+
+01R_P9S16SS1P1_011.tif
+01R _ P9 S16 SS1 P1 _011.tif
+
+image 10 of 199
+
+- same filenames as public site
+- up to last _ is manuscript id.
+- after last _ is page #.
+- this is fine - just use as is.
+
+
+
+* Entry list editor
+- shows entry query results as a table
+- click on an entry to go to entry page.
+- non paginated at first - for initial year of pacifique total entries
+  can always be displayed.
+- links on the top to versions of this in different orders (query parameter)
+* Entry page
+- rendering of entry data, including extracted bits of manuscripts.
+- has a button to launch the entity editor.
+* Entry editor
+- editable rendering of entity data (also shows extracted bits of manuscrips)
+ -
+* Public Identifier
+- entries have a public identifier - which is by default derived by
+  safetying the lexeme spelling in the default ortho (characters that
+  are non-filename safe are turned into _, this is relatively rare).  Use
+  the same algo as legacy MMO.
+- each entry then has a directory corresponding to it, for example:
+  media/a/apsgu'lapa'sit/recording-dmm.wav
+  media/a/apsgu'lapa'sit/example-54f112defba522406c9cc208-dmm.wav
+  XXX unhappy here.
+
+
+- this directory contains all the *source* recordings, illustruative
+  pictures etc.
+- there is a separate 

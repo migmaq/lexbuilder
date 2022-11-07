@@ -19,3 +19,66 @@
   have to build this in, or have this out of band - which will
   be harder for Smith Francis (Lisuguj is done by a small group that
   meet in person)
+* Image tagger
+- https://www.robots.ox.ac.uk/~vgg/software/via/via_demo.html
+- only support rectangular tags
+- allow multiple tags per entry
+- tags may overlap (for portions that are shared by multiple entries)
+- maybe add id generation to via?
+
+* New proposal
+- image tagger is launched separately for each def.
+- the annotations are used for def specific components (if wanted)
+- of course, these can be overlapping
+- can a definition span pages?  Probably, may even have evidence from
+  multiple sources!
+* UI
+- bring up page, labelled bounding boxes on tagged lex compontents, hover
+  help, click to load lexeme (or edit)
+- hover includes the interpretation of lexeme - so can be part of final
+  product (if banq approves).
+* Workflow to create a new lexeme (starting from nothing)
+- while looking at page, click +
+- annotator loads, background image shows areas already claimed by
+  other lexemes.
+- tag some areas, click done.
+- new lexeme is created, and tagging is assoc with that lexeme.
+- launches lexeme editor, which shows image chunks at the top and
+  has the editor underneath.
+- from the lexeme can also relaunch the tagger to edit.
+* Workflow from lexeme
+- can relaunch editor on existing evidence.
+- can add new evidence.
+  - choose evidence book from pulldown
+  - enter evidence page.
+  - creates a blank evidence entry.
+  - launch editor to edit.
+  - this is not super slick - but is easier.
+ - evidence can also be textual (for non image sources)
+* Data model
+- each lexeme has a list of evidences.
+- an evidence is a book/page/list of annotated bounding boxes
+* Choice 1: put in lexeme
+- 
+* Choice 2: separate evidence table
+- seems much better
+- { _id: 88383,
+    book: 'pacific_v1',
+    page: 7,
+    annotations: [
+      {x, y, w, h, comment ...}
+    ]
+  }
+* File system
+- each evidence will have a dir.
+- will have extracted image etc, larger bounding box containign all, with
+  other stuff greyed out.
+- support for hover.
+      
+
+
+- to add a new annotation, click button, loads annotator, and edit annocations
+  for lexeme.
+- sections for that lexeme will be assoc with the lexeme, with lexeme
+  specific tagging.
+- 

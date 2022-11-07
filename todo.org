@@ -1,0 +1,126 @@
+* TODO
+- [ ] switch wordlist to use tableformatter.
+- [ ] update model to correspond to model updates.
+- [ ] fiddle with rendering of model.
+- [ ] make model load/save from DB.
+- [ ] make codegen happen at startup.
+
+- still have more modelling changes, but priority for rest of day
+  is editing what we have.
+- queries should be done in-core.
+- should be able to request views of DB (based on scope system).
+
+* Scope flattening.
+- mm mm-li  mm-sf  mm-sf-cb  mm-sf - mm.cb
+- is output a single context?
+- exprs can b powerful, but if final result is a fixed number
+  of defined contexts (which can be defined in code), then
+  can denormalize as we define new contexts.
+
+* DM questions
+- RAND images?
+- you are putting processing multiople dict entries at once - much harder!
+* References are subset of unit image
+- dianne has not seen more than one.
+* Transliteration - may have more later
+- expect their might be
+- need to have multiple orthos
+* Result
+- Resolved Reference
+* How to do scoping
+- status is scoped.
+- li, sf, ??, both, all but
+- can have columns for resolved scopes + a textual expr that decomposes
+  to cols.
+* Rand source format
+- send me whatever you have
+* Review with researchers
+- date, text.
+- published ???
+* HOW HARD TO switch to SQLite?
+- key is model.
+- rowid is 64 bit.
+- finish cleanup model first, then try!
+- we do have 3 level (li/sf inside an example for example) - so
+  will have more complciated join setup.
+* TODO
+- [ ] update model.
+- [ ] write validation fn for model, and run against import
+- [ ] update code gen for model
+- [ ] write python fn to find next local id.
+- [ ] write js function to find next local id.
+- [ ] remodel related entries.
+
+
+- once have versioning, then lexeme does not have lex label - just
+  versioning.
+
+- 
+  
+* Should li/sf be entity list?
+- probably?
+- can also have multiple spellings for one lex.
+- spellings can have comments.
+- local id space is unique - so these will flatten nicely.
+
+* Scope
+- each separate assertion (thing with an id) should have a scope expr
+- this is versions of dict it is active for.
+- want to model so is not to hard to use in SQL.  
+
+* TODO
+- [ ] setup server for banq to upload to
+- [ ] send banq email
+- [X] change lexeme id to be int
+- [ ] figure out id mechanism for lists, and implement
+  - want ids to be local to entity (so not too huge)
+  - probably 3 digit, starting at 100.
+  - if not hard, just make scan entry, collecting all ints etc.
+  - or have a local allocator?
+  - can init once, then use repeatedly.
+  - field is called 'id' (separate from top level _id)
+  - no reuse - just find highest.
+- [ ] make nice rendering of entry
+- [ ] 
+
+
+* Page data size
+- sample page is 50MB
+- vol 1 is 200p
+- vol 2 is 233p
+- vol 3 is 202p
+- vol 4 is 194p
+
+- so 200pages per volume * 4 = 800pages
+- round up to 1000pages = 50MB * 1000 = 50GB total data.
+
+
+* Model work
+- make list viewer.
+
+
+* List viewer
+- naked (non vue) table.
+- row per lexeme.
+- each row has an id.
+- on click, do a AJAX DB call that increments a counter in the record,
+  then causes an incremental rerender of the row.
+
+
+* Tools look fine, bulk convert data so can do final form!
+
+
+* Virtualenv
+- setup virtualenv
+- install deps in virtual env + pymongo
+* Vue
+- get combined vue quasar example working
+- update form to be a quasar dialog.q
+* Quasar
+- play with grid.
+* Data conversion
+- do hack conversion of data into mongo
+- make lexeme edit points.
+* Data model
+- figure out data requirements for new thing.
+  

@@ -25,8 +25,8 @@ $ ./mmodb.sh
   exist.
 - this is running on a non-standard port (so as not to collide with a
   possible OS install of mongodb)
-- long term this will be switched to run under systemd - this method is
-  just for development.
+- production db will run under systemd - this method is just for
+  development.
 
 * Download "legacy-mmo.json"
 - I didn't put in the git repository because is will bloat it, so
@@ -35,7 +35,7 @@ $ cd lexbuilder/import-data
 $ wget entropy.org/legacy-mmo.json
 
 * Run the importer
-$ python import_from_legacy_mmo.py
+$ python import_from_legacy_mmo.py import_legacy_mmo --i_realize_that_this_will_nuke_the_working_mmo_db
 - Last line will be something like "DB now has 6739 records"
 - Each run nukes the DB and reloads.
 
