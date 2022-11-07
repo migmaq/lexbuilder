@@ -5,8 +5,11 @@ def entry_model():
         'entry', 'Entry', 'entry',
 
         # Lexeme
-        lexeme_model(),
+        ortho_text_model('lexeme', 'Lexeme', 'lexeme'),
 
+        TextField('status', 'Status'),
+        TextField('last_modified_date', 'Last Modified Date'),
+        
         # Definition, glosses etc
         EnumField('part_of_speech', 'Part of Speech'),
         pronunciation_guide_model(),
@@ -20,7 +23,7 @@ def entry_model():
         related_entries_model(),
 
         # Linguist and specialist info
-        TextField('borrowed_word', 'Borrowed Word'),
+        #TextField('borrowed_word', 'Borrowed Word'),
         other_regional_forms_model(),
         other_attrs_model(),
 
@@ -29,36 +32,40 @@ def entry_model():
         TextAreaField('public_note', 'Public Note')
     )
 
-def ortho_text_model(name, prompt):
-    return RequiredObjectField(
-        name, prompt, 'ortho',
+def ortho_text_model(name, prompt, scope_name):
+    return ObjectListField(
+        name, prompt, scope_name,
+        IdField(),
         Row(
-            TextField('li', 'Listuguj Spelling'),
-            TextField('sf', 'Smith-Francis Spelling'),
-        ))
+            TextField('selector', 'Selector'),
+            TextField('text', 'Text'))
+    )
 
-def lexeme_model():
-    return ortho_text_model('lexeme', 'Lexeme')
+#def ortho_text_model(name, prompt):
+#    return RequiredObjectField(
+#        name, prompt, 'ortho',
+#        Row(
+#            TextField('li', 'Listuguj Spelling'),
+#            TextField('sf', 'Smith-Francis Spelling'),
+#        ))
+
+#def lexeme_model():
+#    return ortho_text_model('lexeme', 'Lexeme')
 
 def pronunciation_guide_model():
-    return RequiredObjectField(
-        'pronunciation_guide', 'Pronunciation Guide', 'guide',
-        Row(
-            TextField('li', 'Listuguj Pronunciation'),
-            TextField('sf', 'Smith-Francis Pronunciation')
-        ))
+    return ortho_text_model('pronunciation_guide', 'Pronunciation Guide', 'guide')
 
 def related_entries_model():
     return ObjectListField('related_entries', 'Related Entries', 'entry',
                            IdField(),
-                           TextField('entry', 'Entry'))
+                           TextField('unresolved_text', 'Unresolved Text'))
     
 def examples_model():
     return ObjectListField(
         'examples', 'Examples', 'example',
         IdField(),
         TextField('translation', 'Translation'),
-        ortho_text_model('text', 'Text'),
+        ortho_text_model('text', 'Text', 'text'),
     )
     
 def glosses_model():
@@ -73,7 +80,7 @@ def alternate_grammatical_forms_model():
         IdField(),
         TextField('gloss', 'Gloss'),
         EnumField('grammatical_form', 'Grammatical Form'),
-        ortho_text_model('text', 'Text'),
+        ortho_text_model('text', 'Text', 'text'),
     )
 
 def categories_model():
@@ -93,6 +100,6 @@ def other_attrs_model():
         'attrs', 'Other Attributes', 'attr',
         IdField(),
         Row(
-            TextField('name', 'Name'),
+            TextField('attr', 'Attr'),
             TextField('value', 'Value'),
         ))

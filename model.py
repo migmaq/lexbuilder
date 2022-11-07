@@ -5,6 +5,9 @@ import sys
 import json
 import io
 
+class ValidationError(Exception):
+    pass
+
 class Node:
     def __init__(self, contents=[]):
         self.contents = contents
@@ -20,6 +23,9 @@ class Node:
                 contained_fields.extend(c.contained_fields)
         self.contained_fields = contained_fields
 
+    def validate(self, value):
+        raise ValidationError(f'validation not implemented for {self.__class__.__name__}')
+        
     def bind_field_paths(self, parent_path):
         for f in self.contained_fields:
             f.bind_field_paths(parent_path)
@@ -91,6 +97,18 @@ class ObjectField(Field):
         self.scope_name = scope_name
         self.quantifier = quantifier
 
+    def validate(self, value):
+        if not isinstance(value, dict):
+            raise ValidationError(self.path, f'expected dict for object field got {value}')
+        field_keys = set([f.name for f in self.contained_fields])
+        value_keys = set(value.keys())
+        if field_keys != value_keys:
+            extra_keys_in_value = value_keys - field_keys
+            keys_missing_in_value = field_keys - value_keys
+            raise ValidationError(self.path, f'object field malformed extra-keys: {extra_keys_in_value}, missing_keys: {keys_missing_in_value}')
+        for f in self.contained_fields:
+            f.validate(value[f.name])
+            
     def default_object_value(self):
         v = dict()
         for f in self.contained_fields:
@@ -116,6 +134,12 @@ class ObjectListField(ObjectField):
     def __init__(self, name, prompt, scope_name, *args):
         super().__init__(name, prompt, scope_name, Quantifier.List, *args)
 
+    def validate(self, value):
+        if not isinstance(value, list):
+            raise ValidationError(self.path, f'expected list for list field')
+        for v in value:
+            super().validate(v)
+        
     def render_vue_form(self, out, indent, scope):
         print(f'{indent}<h4>{self.prompt}</h4>', file=out)
         print(f'{indent}<ul>', file=out)
@@ -134,7 +158,8 @@ class ObjectListField(ObjectField):
         self.default_object_value_js(out, indent)
         out.write(f');\n')
         out.write(f'{indent}}}\n\n')
-
+        super().render_vue_script(out, indent, scope)
+        
     def collect_vue_exports(self, out):
         out.append(f'insert_{self.path}')
         super().collect_vue_exports(out)
@@ -149,6 +174,9 @@ class RequiredObjectField(ObjectField):
     def __init__(self, name, prompt, scope_name, *args):
         super().__init__(name, prompt, scope_name, Quantifier.Required, *args)
 
+    def validate(self, value):
+        super().validate(value)
+        
     def render_vue_form(self, out, indent, scope):
         for c in self.contents:
             c.render_vue_form(out, indent, f'{scope}{self.name}.')
@@ -160,6 +188,12 @@ class IdField(Field):
     def __init__(self, name='id', prompt='Id', **kwargs):
         super().__init__(name, prompt, **kwargs)
 
+    def validate(self, value):
+        #if isinstance(value, str):
+        #    raise ValidationError(self.path, f'expected str for text field')
+        # TODO
+        pass
+        
     def render_vue_form(self, out, indent, scope):
         pass
 
@@ -174,6 +208,10 @@ class TextField(Field):
         super().__init__(name, prompt, **kwargs)
         self.width = width
 
+    def validate(self, value):
+        if not isinstance(value, str):
+            raise ValidationError(self.path, f'expected str for text field')
+        
     def render_vue_form(self, out, indent, scope):
         print(f'{indent}<q-input v-model="{scope}{self.name}" label="{self.prompt}"></q-input>', file=out)
 
@@ -183,7 +221,7 @@ class TextField(Field):
     def default_value_js(self, out, indent):
         out.write('""')
     
-class TextAreaField(Field):
+class TextAreaField(TextField):
     def __init__(self, name, prompt, width=None, **kwargs):
         super().__init__(name, prompt, **kwargs)
         self.width = width
@@ -198,6 +236,10 @@ class EnumField(Field):
     def __init__(self, name, prompt, **kwargs):
         super().__init__(name, prompt, **kwargs)
 
+    def validate(self, value):
+        if not isinstance(value, str):
+            raise ValidationError(self.path, f'expected str for enum field')
+        
     def default_value(self):
         return ''
 

@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import mmodb
 import util
+from entry_model import entry_model
 
 sys.stdin.reconfigure(encoding='utf-8')
 sys.stdout.reconfigure(encoding='utf-8')
@@ -57,7 +58,13 @@ def import_legacy_mmo(i_realize_that_this_will_nuke_the_working_mmo_db=False):
     #nestedtext_content = nt.dumps(entries, indent=2, width=0) + "\n"
     #with open('entries.nt', 'w') as f:
     #    f.write(nestedtext_content)
-        
+
+    # validate
+    model = entry_model()
+    model.bind_field_paths(None) # XXX should not be here.
+    for e in entries:
+        model.validate(e)
+    
     # import into database
     import_json_into_db(entries)
 
@@ -174,7 +181,7 @@ def convert_sense(id_allocator, legacy_lexemes_by_name, date, lexeme, note, stat
     related_entries_text = util.stripOptSuffix(related_entries_text, ',')
     related_entries_text = related_entries_text.replace(' and ', ',')
     related_entries = re.split(r"[ ]*,[ ]*", related_entries_text)
-    related_entries = filter(lambda v: v, related_entries)
+    related_entries = list(filter(lambda v: v, related_entries))
     if related_entries_text:
         print(related_entries_text, related_entries)
         for r in related_entries:
@@ -290,7 +297,7 @@ def convert_attrs(id_allocator, attrs):
         out.append({
             'id': id_allocator.alloc_next_id(),
             'attr': k,
-            'text': v
+            'value': v
             })
     return out
 

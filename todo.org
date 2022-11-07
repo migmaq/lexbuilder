@@ -1,4 +1,8 @@
 * TODO
+- do a very nice entry render, then play with editing
+
+
+* TODO
 - [ ] switch wordlist to use tableformatter.
 - [ ] update model to correspond to model updates.
 - [ ] fiddle with rendering of model.
