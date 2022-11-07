@@ -8,6 +8,9 @@ import io
 class ValidationError(Exception):
     pass
 
+class NotImplementedError(Exception):
+    pass
+
 class Node:
     def __init__(self, contents=[]):
         self.contents = contents
@@ -90,6 +93,10 @@ class Field(Node):
     def bind_field_paths(self, parent_path):
         self.path = f'{parent_path}_{self.name}' if parent_path else self.name
         super().bind_field_paths(self.path)
+
+    def render_js_max_id_expr(self):
+        return None
+        
         
 class ObjectField(Field):
     def __init__(self, name, prompt, scope_name, quantifier, *args):
@@ -143,7 +150,7 @@ class ObjectListField(ObjectField):
     def render_vue_form(self, out, indent, scope):
         print(f'{indent}<h4>{self.prompt}</h4>', file=out)
         print(f'{indent}<ul>', file=out)
-        print(f'{indent}  <li v-for="{self.scope_name} in {scope}{self.name}">', file=out)
+        print(f'{indent}  <li v-for="{self.scope_name} in {scope}{self.name}" :key="{self.scope_name}.id">', file=out)
         for c in self.contents:
             c.render_vue_form(out, indent+'    ', f'{self.scope_name}.')
                     
@@ -202,7 +209,11 @@ class IdField(Field):
 
     def default_value_js(self, out, indent):
         out.write('id++') # TEMP HACK - FIX
-    
+
+    def render_js_max_id_expr(self):
+        return None
+        
+        
 class TextField(Field):
     def __init__(self, name, prompt, width=None, **kwargs):
         super().__init__(name, prompt, **kwargs)
@@ -317,16 +328,16 @@ def render_model(model, file_name):
         
         <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/quasar@2.10.1/dist/quasar.umd.prod.js"></script>
+        <script src="/resources/mmo.js"></script>
 
         <script>
          const { createApp, ref } = Vue;
 
          const app = createApp({
              setup() {
-                 let id = 0
-
-                 const entry = ref(
-    """+default_value_js+""");
+                 const _entry = """+default_value_js+""";
+                 let id = next_id(_entry);
+                 const entry = ref(_entry);
 
     """+rendered_script+"""
 
@@ -347,3 +358,5 @@ def render_model(model, file_name):
         text_file.write(page)
     
     
+"""
+"""
