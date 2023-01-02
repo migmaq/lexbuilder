@@ -1,3 +1,108 @@
+* Bat
+- 64% at 1:36
+- 56% at 1:55 = 20 min for 8%
+  24% per hour
+  - 2 hours
+  - last till 4.
+    
+
+
+* TODAY
+- [ ] prototype enums
+- [ ] prototype list editing (up, down, del etc)
+- [ ] integrate proto stuff back into generated
+- [ ] fix row id generation (if needed)
+- [ ] get click on list to do load
+- [ ] get page load to work
+- [ ] get page save to work
+
+- think about multiple pages in one HTML page - including lists.
+- think about the larger wrapper for entity (for list editing, queries,
+  invariants etc).
+- fix alignment of menu button
+
+* Next - Enums!
+- enum (join) figure out vue model.
+- can do a slick job, with seach filtering etc.
+- can lazy load list (for the big joins - like lex list)
+- is possible to update lists - but leave as a later feature.
+- use this to make all? enums driven from DB tables.
+- as things go is not too bad that user has to save, add category, then go back to word.
+- define some of these tables in importer and push stuff in.
+
+* Next - lists
+- default behaviour is one empty item - with next item added.
+- any entry that is completetly cleared out is removed.
+* Next - swith public note to HTML or text area
+
+* Next table editor as a unit
+- specify a bit more, and should get a complete table editor (browse list with query etc,
+  insert/delete/edit functionality etc.
+- probably a class that we override to get this behaviour.
+
+
+* Tables we need
+- entry
+- pacific page
+- pacific import unit
+
+  
+- category
+- user
+  - edit permissions
+  - learning info
+- language variant
+
+- home page
+- story page
+- ...
+
+* RRBR version
+- pages
+- event
+  - time
+  - location id
+  - volunteer ids
+  - cash raised
+  - bikes fixed (at least postal codes)
+- location (may have directions, picture etc)
+- 
+
+* Model changes
+- make definition be a list.
+- last change rethink.  (probably keeping history etc).
+- 'Selector' is confusing 'Locale'  Language Variant
+- make enums work.
+- enums should probably be populated from tables (need for things like categories anyway).
+- text areas should be markdown? or similar.
+
+
+
+
+
+* TODO
+- make word compilation to html be a lazy computed item (not saved to disk)
+- make form styling reasonable
+- make wordlist click load a word in form
+- make save update word.
+- move table rendreing specification into the model.
+- make model for more things.
+- 
+
+
+
+
+
+* Things that maybe shoud have selector
+- status
+- definitions - change to list
+- examples?  (covered by text)
+- glosses (covered by text)
+- other regional forms
+- attrs.
+
+Selectors will be pulldown + custom if chosen.
+
 * TODO
 - do a very nice entry render, then play with editing
 

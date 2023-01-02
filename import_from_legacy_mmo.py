@@ -8,7 +8,7 @@ from pathlib import Path
 import re
 import mmodb
 import util
-from entry_model import entry_model
+from entry_model import entry_model_factory
 
 sys.stdin.reconfigure(encoding='utf-8')
 sys.stdout.reconfigure(encoding='utf-8')
@@ -60,10 +60,10 @@ def import_legacy_mmo(i_realize_that_this_will_nuke_the_working_mmo_db=False):
     #    f.write(nestedtext_content)
 
     # validate
-    model = entry_model()
-    model.bind_field_paths(None) # XXX should not be here.
+    model = entry_model_factory.model()
+    #model.bind_field_paths(None) # XXX should not be here.
     for e in entries:
-        model.validate(e)
+        model.root_field.validate(e)
     
     # import into database
     import_json_into_db(entries)
@@ -151,7 +151,12 @@ def convert_sense(id_allocator, legacy_lexemes_by_name, date, lexeme, note, stat
     entry['lexeme'] = ortho_text(id_allocator, lexeme)
     # remodel status TODO: skip/done ???
     assert status=='done' or status=='skip', 'unknown status {status}'
-    entry['status'] = status
+    entry['status'] = [{
+        'id': id_allocator.alloc_next_id(),
+        'variant': 'mm-li',
+        'status': status,
+        'details': ''
+    }]            
     
     # remodel date TODO toolbox last edit date.
     # TODO: change date format from "31/Jul/2019", to "2019-07-31"
@@ -193,7 +198,7 @@ def convert_sense(id_allocator, legacy_lexemes_by_name, date, lexeme, note, stat
                 
     # try to resolve!
     #entry['related_entries'] = sense.pop('crossRef')  # TODO should be list of lexes
-    entry['definition'] = sense.pop('definition')
+    entry['definitions'] = [convert_definition(id_allocator, sense.pop('definition'))]
     #assert not sense.pop('label')
     assert len(sense.pop('notes')) == 0
     sense.pop('picture')
@@ -254,6 +259,17 @@ def convert_alternate_form(id_allocator, src):
 #            } ]
 #          } ],
 
+def convert_definition(id_allocator, definition_text):
+    out = dict()
+    out['id'] = id_allocator.alloc_next_id()
+    # try to resolve - but need id to do that!
+    # so, will need to pre-assign ids.
+    out['definition'] = definition_text
+    return out
+
+
+
+
 def convert_related_entry(id_allocator, related_entry_name):
     out = dict()
     out['id'] = id_allocator.alloc_next_id()
@@ -288,6 +304,7 @@ def convert_category(id_allocator, category):
 def convert_other_regional_form(id_allocator, regional_form):
     out = dict()
     out['id'] = id_allocator.alloc_next_id()
+    print('OTHER REG', regional_form['label'])
     out['text'] = regional_form['label']
     return out
 
@@ -312,7 +329,7 @@ def ortho_text(id_allocator, li, sf=None):
 def ortho_text_record(id_allocator, selector, text):
     return {
         'id': id_allocator.alloc_next_id(),
-        'selector': selector,
+        'variant': selector,
         'text': text
     }    
 
