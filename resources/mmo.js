@@ -1,3 +1,56 @@
+function new_item_id() {
+    return crypto.randomUUID();
+}
+
+function find_ref_idx(items, ref_id) {
+    return items.findIndex(e => e.id == ref_id);
+}
+
+function insert_item_before(items, ref_id, item) {
+    insert_item(items, ref_id, item, true);
+}
+
+function insert_item_after(items, ref_id, item) {
+    insert_item(items, ref_id, item, false);
+}
+
+function insert_item(items, ref_id, item, before) {
+    if (!ref_id) {
+        items.push(item);
+    } else {
+        console.info("loloking", items, ref_id);
+        let ref_idx = find_ref_idx(items, ref_id);
+        console.info("ref_idx", ref_idx);
+        if (ref_idx == undefined) {
+            throw new Error("Failed to find reference index for insert");
+        }
+        items.splice(ref_idx+(before?0:1), 0, item);
+    }
+
+}
+
+function move_item_up(items, ref_id) {
+    let ref_idx = find_ref_idx(items, ref_id);
+    if (ref_idx == undefined || ref_idx<1)
+        return;
+    items.splice(ref_idx-1, 2, items[ref_idx], items[ref_idx-1]);
+}
+
+function move_item_down(items, ref_id) {
+    let ref_idx = find_ref_idx(items, ref_id);
+    if (ref_idx == undefined || ref_idx+1==items.length)
+        return;
+    items.splice(ref_idx, 2, items[ref_idx+1], items[ref_idx]);
+}
+
+function delete_item(items, ref_id) {
+    let ref_idx = find_ref_idx(items, ref_id);
+    console.info('delete got refidx', ref_idx);
+    if (ref_idx == undefined)
+        throw new Error("Failed to find item to delete");
+    items.splice(ref_idx, 1);
+}
+
 /**
  * The mmo data model for an entity is a tree of JS {}'s and []'s.
  *

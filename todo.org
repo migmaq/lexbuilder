@@ -1,3 +1,7 @@
+- figure out scope/scope_name relationship and fix so that list edit menu can be a
+  decoration item.
+
+
 * Bat
 - 64% at 1:36
 - 56% at 1:55 = 20 min for 8%

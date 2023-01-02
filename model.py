@@ -63,7 +63,7 @@ class Root(Node):
         out = io.StringIO()
 
         out.write('\n')
-        self.render_vue_form(out, '           ', '')
+        self.render_vue_form(out, '           ', None)
         out.write('\n')
         rendered_form = out.getvalue()
 
@@ -73,13 +73,19 @@ class Root(Node):
 
         out = io.StringIO()
         out.write('\n')
-        self.render_vue_script(out, '                 ', '')
+        self.render_vue_script(out, '                 ', None)
         out.write('\n')
         rendered_script = out.getvalue()
 
         view_exports = []
         self.collect_vue_exports(view_exports)
         view_exports.append('entry')
+
+        lib_exports = ['insert_item_before', 'insert_item_after',
+                       'move_item_up', 'move_item_down',
+                       'delete_item']
+
+        view_exports += lib_exports
 
         page = """\
 <!DOCTYPE html>
@@ -224,25 +230,62 @@ class ObjectListField(ObjectField):
     def render_vue_form(self, out, indent, scope):
         print(f'{indent}<div class="text-h4">{self.prompt}</div>', file=out)
         #print(f'{indent}<ul>', file=out)
-        print(f'{indent}  <div v-for="{self.scope_name} in {scope}{self.name}" :key="{self.scope_name}.id">', file=out)
+        
+        print(f'{indent}  <div v-for="{self.scope_name} in {scope}.{self.name}" :key="{self.scope_name}.id">', file=out)
         for c in self.contents:
-            c.render_vue_form(out, indent+'    ', f'{self.scope_name}.')
-                    
+            # TODO XXX these are all going to need different cols.
+            # Sometimes cols sometimes not (is mode)
+            c.render_vue_form(out, indent+'    ', f'{self.scope_name}')
+        # XXX still don't have a nice way of moving this.
+        # - ???
+        print(f"""
+                   <q-btn padding="xs xs" color="secondary" round icon="menu">
+                       <q-menu auto-close>
+                           <q-list style="min-width: 100px">
+                               <q-item clickable @click="insert_item_after({scope}.{self.name}, {self.scope_name}.id, new_{self.path()}())">
+                                   <q-item-section>Insert After</q-item-section>
+                               </q-item>
+                               <q-item clickable @click="insert_item_before({scope}.{self.name}, {self.scope_name}.id, new_{self.path()}())">
+                                   <q-item-section>Insert Before</q-item-section>
+                               </q-item>
+                               <q-separator></q-separator>
+                               <q-item clickable @click="move_item_up({scope}.{self.name}, {self.scope_name}.id)">
+                                   <q-item-section>Move Up</q-item-section>
+                               </q-item>
+                               <q-item clickable @click="move_item_down({scope}.{self.name}, {self.scope_name}.id)">
+                                   <q-item-section>Move Down</q-item-section>
+                               </q-item>
+                               <q-separator></q-separator>
+                               <q-item clickable @click="delete_item({scope}.{self.name}, {self.scope_name}.id)">
+                                   <q-item-section>Delete</q-item-section>
+                               </q-item>
+                           </q-list>
+                       </q-menu>
+                   </q-btn>
+        """, file=out)
         print(f'{indent}  </div>', file=out)
-        print(f'{indent} <button @click="insert_{self.path()}({scope}{self.name}, {self.scope_name})">Add {self.prompt}</button>', file=out)
+        print(f'{indent}  <q-btn padding="xs xs" color="primary" round icon="add" @click="insert_item_after({scope}.{self.name}, undefined, new_{self.path()}())"></q-btn>', file=out)
+        
         #print(f'{indent}</ul>', file=out)
 
 
     def render_vue_script(self, out, indent, scope):
-        out.write(f'{indent}function insert_{self.path()}(elems, ref_elem) {{\n')
-        out.write(f'{indent}  elems.push(')
+        #out.write(f'{indent}function insert_{self.path()}(elems, ref_elem) {{\n')
+        #out.write(f'{indent}  elems.push(')
+        #self.default_object_value_js(out, indent)
+        #out.write(f');\n')
+        #out.write(f'{indent}}}\n\n')
+
+        out.write(f'{indent}function new_{self.path()}(elems, ref_elem) {{\n')
+        out.write(f'{indent}  return')
         self.default_object_value_js(out, indent)
-        out.write(f');\n')
+        out.write(f';\n')
         out.write(f'{indent}}}\n\n')
+        
         super().render_vue_script(out, indent, scope)
         
     def collect_vue_exports(self, out):
-        out.append(f'insert_{self.path()}')
+        out.append(f'new_{self.path()}')
         super().collect_vue_exports(out)
         
     def default_value(self):
@@ -259,9 +302,16 @@ class RequiredObjectField(ObjectField):
         super().validate(value)
         
     def render_vue_form(self, out, indent, scope):
+        # The root 'Object' is always a 'RequiredObjectField'.
+        # This special casing allows root object to be read out of the vue state store.
+        if scope == None:
+            scope_name = self.name
+        else:
+            scope_name = f'{scope}.{self.name}'
+            
         for c in self.contents:
-            c.render_vue_form(out, indent, f'{scope}{self.name}.')
-
+            c.render_vue_form(out, indent, scope_name)
+ 
     def default_value(self):
         return self.default_object_value()
 
@@ -283,7 +333,7 @@ class IdField(Field):
         return '' # XXX TODO ???
 
     def default_value_js(self, out, indent):
-        out.write('id++') # TEMP HACK - FIX
+        out.write('new_item_id()') # TEMP HACK - FIX
 
     def render_js_max_id_expr(self):
         return None
@@ -299,7 +349,7 @@ class TextField(Field):
             raise ValidationError(self.path(), f'expected str for text field')
         
     def render_vue_form(self, out, indent, scope):
-        print(f'{indent}<q-input v-model="{scope}{self.name}" label="{self.prompt}"></q-input>', file=out)
+        print(f'{indent}<q-input v-model="{scope}.{self.name}" label="{self.prompt}"></q-input>', file=out)
 
     def default_value(self):
         return ''
@@ -341,7 +391,7 @@ class Heading(Decoration):
         super().__init__()
         self.title = title
 
-class Row(Decoration):
+class FieldRow(Decoration):
     def __init__(self, *args):
         super().__init__(contents=args)
 

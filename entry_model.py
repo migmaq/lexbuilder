@@ -50,7 +50,7 @@ def status():
     return ObjectListField(
         'status', 'Status', 'status',
         IdField(),
-        Row(
+        FieldRow(
             TextField('variant', "Mi’kmaq Variant"),
             TextField('status', 'Status'),
             TextField('details', 'Details'))
@@ -60,7 +60,7 @@ def ortho_text(name, prompt, scope_name):
     return ObjectListField(
         name, prompt, scope_name,
         IdField(),
-        Row(
+        FieldRow(
             TextField('variant', "Mi’kmaq Variant"),  # ZZZ CHANGE
             TextField('text', "Mi’kmaq Text"))
     )
@@ -68,7 +68,7 @@ def ortho_text(name, prompt, scope_name):
 #def ortho_text(name, prompt):
 #    return RequiredObjectField(
 #        name, prompt, 'ortho',
-#        Row(
+#        FieldRow(
 #            TextField('li', 'Listuguj Spelling'),
 #            TextField('sf', 'Smith-Francis Spelling'),
 #        ))
@@ -129,7 +129,7 @@ def other_attrs():
     return ObjectListField(
         'attrs', 'Other Attributes', 'attr',
         IdField(),
-        Row(
+        FieldRow(
             TextField('attr', 'Attr'),
             TextField('value', 'Value'),
         ))

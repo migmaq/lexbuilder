@@ -148,7 +148,7 @@ def convert_sense(id_allocator, legacy_lexemes_by_name, date, lexeme, note, stat
 
     entry = dict()
     #entry['lexeme'] = lex_text
-    entry['lexeme'] = ortho_text(id_allocator, lexeme)
+    entry['spelling'] = ortho_text(id_allocator, lexeme)
     # remodel status TODO: skip/done ???
     assert status=='done' or status=='skip', 'unknown status {status}'
     entry['status'] = [{
